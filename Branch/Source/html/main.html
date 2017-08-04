@@ -22,21 +22,68 @@
 			var meshes = [];
 			var materials = [];
 			var action = {}, mixer;
-			var renderer = new THREE.WebGLRenderer();
+			var renderer = new THREE.WebGLRenderer({alpha: true} );
 			var loader = new THREE.JSONLoader();
+			var iWolf;
+			var iLand;
+			var bSkinning = false; //Flag variable to indicate if a model has bones or not.
 			
 			
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 
 
-			initLights();
 			camera.position.z = 10;
+			camera.position.y = 10;
 			
 	
+			/*******************************************************/
+			/*					  Model Loading                    */
+			/*******************************************************/
+			bSkinning = true;			
 			loadMesh('..\\..\\JSON\\wolf3.json');
+			iWolf = 0;
 			
+			bSkinning = false;		
+			loadMesh('..\\..\\JSON\\Land.json');			
+			loadMesh('..\\..\\JSON\\YellowBalloon.json');
+			loadMesh('..\\..\\JSON\\PurpleBalloon.json');
+			loadMesh('..\\..\\JSON\\River.json');
+			loadMesh('..\\..\\JSON\\LightHouse.json');
+			loadMesh('..\\..\\JSON\\YellowHouse.json');
+			loadMesh('..\\..\\JSON\\YellowHouse2.json');
+			loadMesh('..\\..\\JSON\\BlueHouse.json');
+			loadMesh('..\\..\\JSON\\BrownHouse.json');			
+			loadMesh('..\\..\\JSON\\Bridge.json');
+			loadMesh('..\\..\\JSON\\Windmill.json');			
+			loadMesh('..\\..\\JSON\\BrownTree.json');
+			loadMesh('..\\..\\JSON\\BrownTree2.json');			
+			loadMesh('..\\..\\JSON\\PurpleTree.json');
+			loadMesh('..\\..\\JSON\\PurpleTree2.json');
+			loadMesh('..\\..\\JSON\\PurpleTree3.json');
+			loadMesh('..\\..\\JSON\\GreenTree1.json');
+			loadMesh('..\\..\\JSON\\GreenTree2.json');			
+			loadMesh('..\\..\\JSON\\GreenTree3.json');
+			loadMesh('..\\..\\JSON\\GreenTree4.json');
+			loadMesh('..\\..\\JSON\\GreenTree5.json');
+			loadMesh('..\\..\\JSON\\GreenTree6.json');
+			loadMesh('..\\..\\JSON\\GreenTree7.json');
+			loadMesh('..\\..\\JSON\\GreenTree8.json');
+			loadMesh('..\\..\\JSON\\GreenTree9.json');
+			loadMesh('..\\..\\JSON\\GreenTree10.json');
+			loadMesh('..\\..\\JSON\\GreenTree11.json');
+			loadMesh('..\\..\\JSON\\GreenTree12.json');
+			loadMesh('..\\..\\JSON\\GreenTree13.json');
+			loadMesh('..\\..\\JSON\\GreenTree14.json');
+			loadMesh('..\\..\\JSON\\LittleBrownTree1.json');
+			loadMesh('..\\..\\JSON\\LittleBrownTree2.json');
+			loadMesh('..\\..\\JSON\\LittleBrownTree3.json');
+			loadMesh('..\\..\\JSON\\LittleBrownTree4.json');
+			loadMesh('..\\..\\JSON\\Plant1.json');
+			loadMesh('..\\..\\JSON\\Plant2.json');
+			loadMesh('..\\..\\JSON\\Plant3.json');
 			
+			initLights();
 		    render();
 		
 		</script>

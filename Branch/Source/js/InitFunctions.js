@@ -1,30 +1,37 @@
 function loadMesh(json){
-	var material = [];
-	var loader = new THREE.JSONLoader();
 	
-	loader.load(json,function (geometry, materials) {
+		var loader = new THREE.JSONLoader();
+		loader.load(json,createMesh);
+	
+}
 
-		for(iChild = 0; iChild < materials.length; iChild++){
-			material.push(materials[iChild]);
-			material[iChild].skinning = true;
-		}	
-			
-		mesh = new THREE.SkinnedMesh(geometry, material);
-		scene.add(mesh);
+function createMesh(geometry, materials){
+	var material = [];
+	
+	for(iChild = 0; iChild < materials.length; iChild++){
+		material.push(materials[iChild]);
 		
-		mixer = new THREE.AnimationMixer(mesh);
-		action.walk = mixer.clipAction(mesh.geometry.animations[ 0 ]);
-		action.walk.setEffectiveWeight(1);
-		action.walk.enabled = true;	
-		action.walk.play();
-    });	
+		if (bSkinning == true){
+			material[iChild].skinning = true;
+		}
+	}	
+		
+	meshes.push(new THREE.SkinnedMesh(geometry, material));
+	scene.add(meshes[meshes.length - 1]);
+	/*
+	mixer = new THREE.AnimationMixer(meshes[meshes.length - 1]);
+	action.walk = mixer.clipAction(meshes[meshes.length - 1].geometry.animations[ 0 ]);
+	action.walk.setEffectiveWeight(1);
+	action.walk.enabled = true;	
+	action.walk.play();	*/
 }
 
 function render(){
 	requestAnimationFrame(render);
 	
-	var delta = clock.getDelta();
-	mixer.update(delta);
+
+	//var delta = clock.getDelta();
+	//mixer.update(delta);
 	
 	renderer.render(scene,camera);
 };
@@ -41,6 +48,13 @@ function rotateMesh(mesh) {
 }		
 
 function initLights() {
-	var light = new THREE.AmbientLight(0xffffff);
+	var light = new THREE.AmbientLight(0xffffff,0.4);
 	scene.add(light);
-}	
+	
+	//Create a DirectionalLight and turn on shadows for the light
+	var light = new THREE.DirectionalLight( 0xffffff, .6 );
+	light.position.set( 100, 100, -100 ); 			//default; light shining from top
+	scene.add( light );
+
+
+}
