@@ -12,6 +12,7 @@
 		<script src="..\js\three.js"></script>
 		<script src="..\js\InitFunctions.js"></script>
 		<script src="..\js\EventListener.js"></script>
+		
 		<script>
 			/*******************************************************/
 			/*					SCENE COMPONENTS                   */
@@ -27,6 +28,8 @@
 			var iWolf;
 			var iLand;
 			var bSkinning = false; //Flag variable to indicate if a model has bones or not.
+			
+			
 			
 			
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -85,7 +88,20 @@
 			
 			initLights();
 		    render();
-		
+			
+			
+			var audiolistener = new THREE.AudioListener();
+			camera.add( this.audiolistener );
+
+			var sound = new THREE.Audio( audiolistener );
+			var audioLoader = new THREE.AudioLoader();
+			audioLoader.load( '..\\..\\soundeffects\\starwars.mp3', function( buffer ) {
+			sound.setBuffer( buffer );
+			sound.setLoop(false);
+			sound.setVolume(0.5);
+			sound.play();
+			});
+			
 		</script>
 	</body>
 </html>
