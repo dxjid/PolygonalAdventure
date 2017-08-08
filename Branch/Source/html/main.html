@@ -12,7 +12,7 @@
 		<script src="..\js\three.js"></script>
 		<script src="..\js\InitFunctions.js"></script>
 		<script src="..\js\EventListener.js"></script>
-		
+
 		<!-- ------------------------------------------------------------ -->
 		<script src="..\js\jquery-1.9.1.js"></script>
 		<script src="..\js\jquery-ui.js"></script>
@@ -38,75 +38,91 @@
 			/*******************************************************/
 		    var clock = new THREE.Clock();
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 100 );
+			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 1000 );
 			var meshes = [];
+			var MeshActions = [];
 			var materials = [];
-			var action = {}, mixer;
+			var action = {}, mixers = [];
 			var renderer = new THREE.WebGLRenderer({alpha: true} );
 			var loader = new THREE.JSONLoader();
 			var iWolf;
-			var iLand;
-			var bSkinning = false; //Flag variable to indicate if a model has bones or not.
+			var iSheep;
+			var iHuman;
+			var iCabbage;
+			var iTitle;
+			var iEnd;
+			var iHit;
+			var WOLF = 0,
+				HUMAN = 1,
+				CABBAGE = 2,
+				SHEEP = 3;
+			var bFollowSheep = false;
+			var bFollowWolf = false;
+			var bFollowCabbage = false;
+			var sJSONFolder = "..\\..\\JSON\\";
+			var bHumanWalking = false;
+			var bStart = false;
+			var bGameOver = false;
 			
-			
-			
+			for(i=0;i<4;i++){
+				MeshActions.push([]);
+			}
 			
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 
 
-			camera.position.z = 10;
-			camera.position.y = 10;
-			
+			camera.position.z = 300;
+			camera.position.y = 75;
+			camera.lookAt( new THREE.Vector3(0,0,0) );
 	
 			/*******************************************************/
 			/*					  Model Loading                    */
-			/*******************************************************/
-			bSkinning = true;			
-			loadMesh('..\\..\\JSON\\wolf3.json');
-			iWolf = 0;
+			/*******************************************************/		
 			
-			bSkinning = false;		
-			loadMesh('..\\..\\JSON\\Land.json');			
-			loadMesh('..\\..\\JSON\\YellowBalloon.json');
-			loadMesh('..\\..\\JSON\\PurpleBalloon.json');
-			loadMesh('..\\..\\JSON\\River.json');
-			loadMesh('..\\..\\JSON\\LightHouse.json');
-			loadMesh('..\\..\\JSON\\YellowHouse.json');
-			loadMesh('..\\..\\JSON\\YellowHouse2.json');
-			loadMesh('..\\..\\JSON\\BlueHouse.json');
-			loadMesh('..\\..\\JSON\\BrownHouse.json');			
-			loadMesh('..\\..\\JSON\\Bridge.json');
-			loadMesh('..\\..\\JSON\\Windmill.json');			
-			loadMesh('..\\..\\JSON\\BrownTree.json');
-			loadMesh('..\\..\\JSON\\BrownTree2.json');			
-			loadMesh('..\\..\\JSON\\PurpleTree.json');
-			loadMesh('..\\..\\JSON\\PurpleTree2.json');
-			loadMesh('..\\..\\JSON\\PurpleTree3.json');
-			loadMesh('..\\..\\JSON\\GreenTree1.json');
-			loadMesh('..\\..\\JSON\\GreenTree2.json');			
-			loadMesh('..\\..\\JSON\\GreenTree3.json');
-			loadMesh('..\\..\\JSON\\GreenTree4.json');
-			loadMesh('..\\..\\JSON\\GreenTree5.json');
-			loadMesh('..\\..\\JSON\\GreenTree6.json');
-			loadMesh('..\\..\\JSON\\GreenTree7.json');
-			loadMesh('..\\..\\JSON\\GreenTree8.json');
-			loadMesh('..\\..\\JSON\\GreenTree9.json');
-			loadMesh('..\\..\\JSON\\GreenTree10.json');
-			loadMesh('..\\..\\JSON\\GreenTree11.json');
-			loadMesh('..\\..\\JSON\\GreenTree12.json');
-			loadMesh('..\\..\\JSON\\GreenTree13.json');
-			loadMesh('..\\..\\JSON\\GreenTree14.json');
-			loadMesh('..\\..\\JSON\\LittleBrownTree1.json');
-			loadMesh('..\\..\\JSON\\LittleBrownTree2.json');
-			loadMesh('..\\..\\JSON\\LittleBrownTree3.json');
-			loadMesh('..\\..\\JSON\\LittleBrownTree4.json');
-			loadMesh('..\\..\\JSON\\Plant1.json');
-			loadMesh('..\\..\\JSON\\Plant2.json');
-			loadMesh('..\\..\\JSON\\Plant3.json');
-			
-			initLights();
-		    render();
+			loadMesh('Wolf');
+			loadMesh('Human');
+			loadMesh('Cabbage');
+			loadMesh('Sheep');
+			loadMesh('Land');			
+			loadMesh('YellowBalloon');
+			loadMesh('PurpleBalloon');
+			loadMesh('River');
+			loadMesh('LightHouse');
+			loadMesh('YellowHouse');
+			loadMesh('YellowHouse2');
+			loadMesh('BlueHouse');
+			loadMesh('BrownHouse');
+			loadMesh('Bridge');
+			loadMesh('Windmill');			
+			loadMesh('BrownTree');
+			loadMesh('BrownTree2');			
+			loadMesh('PurpleTree');
+			loadMesh('PurpleTree2');
+			loadMesh('PurpleTree3');
+			loadMesh('PurpleTree4');
+			loadMesh('GreenTree1');
+			loadMesh('GreenTree2');			
+			loadMesh('GreenTree3');
+			loadMesh('GreenTree4');
+			loadMesh('GreenTree5');
+			loadMesh('GreenTree6');
+			loadMesh('GreenTree7');
+			loadMesh('GreenTree8');
+			loadMesh('GreenTree9');
+			loadMesh('GreenTree10');
+			loadMesh('GreenTree11');
+			loadMesh('GreenTree12');
+			loadMesh('GreenTree13');
+			loadMesh('GreenTree14');
+			loadMesh('LittleBrownTree1');
+			loadMesh('LittleBrownTree2');
+			loadMesh('LittleBrownTree3');
+			loadMesh('LittleBrownTree4');
+			loadMesh('Plant1');
+			loadMesh('Plant2');
+			loadMesh('Plant3');
+		
 			
 			
 			var audiolistener = new THREE.AudioListener();
@@ -121,6 +137,10 @@
 			sound.play();
 			});
 			
+			createTexts("start");
+			initLights();
+		    render();
+		
 		</script>
 	</body>
 </html>
