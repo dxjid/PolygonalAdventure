@@ -124,7 +124,9 @@
 			loadMesh('Plant3');
 		
 			
-			
+			/*******************************************************/
+			/*					  General Audio                    */
+			/*******************************************************/	
 			var audiolistener = new THREE.AudioListener();
 			camera.add( this.audiolistener );
 
@@ -137,6 +139,26 @@
 			sound.play();
 			});
 			
+			/*******************************************************/
+			/*					  BackGroundEnv                    */
+			/*******************************************************/	
+			var geometry = new THREE.CubeGeometry(500,500,500)	
+			var cubeMaterials =
+			[
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\front.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\back.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\up.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\down.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\right.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\left.png"),side: THREE.BackSide})
+			];
+			
+			var cube = new THREE.Mesh(geometry,cubeMaterials);
+			scene.add(cube);
+			
+			/*******************************************************/
+			/*					  Ikou                             */
+			/*******************************************************/	
 			createTexts("start");
 			initLights();
 		    render();
