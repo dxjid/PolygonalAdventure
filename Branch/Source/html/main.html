@@ -53,6 +53,8 @@
 			var iTitle;
 			var iEnd;
 			var iHit;
+			var iComplete;
+			var iRaft;
 			var WOLF = 0,
 				HUMAN = 1,
 				CABBAGE = 2,
@@ -65,6 +67,10 @@
 			var bStart = false;
 			var bGameOver = false;
 			var CollideableMesh = [];
+			var bInRaft = false;
+			var bRaftLeft = true;
+			var PointGoal = new THREE.Vector3(86,-13.0,-136);
+			var bComplete = false;
 			//var cube;
 			
 			for(i=0;i<4;i++){
@@ -87,6 +93,7 @@
 			loadMesh('Human');
 			loadMesh('Cabbage');
 			loadMesh('Sheep');
+			loadMesh('Raft');
 			loadMesh('Land');				
 			loadMesh('YellowBalloon');
 			loadMesh('PurpleBalloon');
@@ -96,7 +103,6 @@
 			loadMesh('YellowHouse2');
 			loadMesh('BlueHouse');
 			loadMesh('BrownHouse');
-			loadMesh('Bridge');
 			loadMesh('Windmill');			
 			loadMesh('BrownTree');
 			loadMesh('BrownTree2');			
