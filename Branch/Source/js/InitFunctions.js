@@ -21,27 +21,54 @@ function createMesh(geometry, materials,sName,bSkinning){
 	var mesh;
 	var iPos = -1;
 	
-	for(iChild = 0; iChild < materials.length; iChild++){
-		material.push(materials[iChild]);
-		material[iChild].skinning = bSkinning;
+	if( materials != null ){
+		for(iChild = 0; iChild < materials.length; iChild++){
+			material.push(materials[iChild]);
+			material[iChild].skinning = bSkinning;
 
-	}	
+		}	
+	}
+	
+	/*
+	if(sName.includes("Bound")){
+		var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );	
+	}
+	*/
 	
 	mesh = new THREE.SkinnedMesh(geometry, material);
 	mesh.name = sName;
 	meshes.push(mesh);
+	
+	if(sName.includes("Bound")){
+		CollideableMesh.push(mesh);
+	}
+	
 	scene.add(meshes[meshes.length - 1]);
+	
+
+	
 	
 	if(sName == "Wolf"){
 		iPos = WOLF;
 	}else if(sName == "Human"){
 		iPos = HUMAN;
+		
+		/*
+		var box = new THREE.Box3();
+		box.setFromObject (mesh);
+
+		var geometry = new THREE.BoxGeometry( Math.abs(box.max.x - box.min.x), Math.abs(box.max.y - box.min.y), Math.abs(box.max.z - box.min.z) );
+		var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+		cube = new THREE.Mesh( geometry, material );
+		cube.position = mesh.position;
+		scene.add( cube );
+		*/
+		
 	}else if(sName == "Cabbage"){
 		iPos = CABBAGE;
 	}else if(sName == "Sheep"){
 		iPos = SHEEP;
 	}
-	
 	
 	if(mesh.geometry.animations != null){
 		for(i = 0; i < mesh.geometry.animations.length; i++){
@@ -52,6 +79,7 @@ function createMesh(geometry, materials,sName,bSkinning){
 			
 		}
 	}
+
 }
 
 function render(){
@@ -76,6 +104,7 @@ function render(){
 			}
 		}
 	}
+	
 	
 	renderer.render(scene,camera);
 };
@@ -146,10 +175,10 @@ function assignId(){
 
 function setInitialPositions(){
 	
-	meshes[iWolf].position.set(0,0,0);
-	meshes[iHuman].position.set(-134.52,-28.99,40.60);
-	meshes[iCabbage].position.set(100,-10,-178);
-	meshes[iSheep].position.set(212.64261,-16.81784,43.47626);
+	meshes[iWolf].position.set(0,-13.0,0);
+	meshes[iHuman].position.set(-134.52,-13.0,40.60);
+	meshes[iCabbage].position.set(100,-13.0,-178);
+	meshes[iSheep].position.set(212.64261,-13.0,43.47626);
 	
 }
 
@@ -277,4 +306,39 @@ function createTextMesh(name,text,font){
 		meshes.push(textMesh)
 		
 		scene.add(meshes[meshes.length - 1]);		
+}
+
+function detectCollision(mesh){
+	
+	var BoundingBox = new THREE.Box3().setFromObject( mesh );
+	
+	for(var i = 0; i < CollideableMesh.length ; i++){
+		var BoundingPlane = new THREE.Plane().setFromCoplanarPoints(CollideableMesh[i].geometry.vertices[0],CollideableMesh[i].geometry.vertices[1],CollideableMesh[i].geometry.vertices[2]).normalize();
+		var bVertexMin = isInFront(BoundingBox.min,BoundingPlane);
+		var bVertexMax = isInFront(BoundingBox.max,BoundingPlane);
+		
+		if(( bVertexMin || bVertexMax ) && !( bVertexMin && bVertexMax ) ){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function isInFront(vertex,Plane){
+	var VertexToPlane = new THREE.Vector3( );
+	var PlaneNormal = new THREE.Vector3( );
+	
+	VertexToPlane.copy(vertex);
+	PlaneNormal.copy(Plane.normal);
+	
+	VertexToPlane = VertexToPlane.sub(Plane.coplanarPoint()).normalize();
+	var CosAngle = PlaneNormal.dot(VertexToPlane);
+	
+	if( CosAngle < 0 ){
+		return false;
+	}else{
+		return true;
+	}
+	
 }
