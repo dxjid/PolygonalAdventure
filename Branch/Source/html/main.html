@@ -19,6 +19,7 @@
 		<link rel=stylesheet href="..\css\jquery-ui.css" />
 		<link rel=stylesheet href="..\css\info.css"/>
 		<script src="..\js\info.js"></script>
+		<div id="message"></div>
 		<div id="infoButton"></div>
 		<div id="infoBox" title="Information about the Game">
 		To win this game you have to solve the riddle.The Object of the game is to transport the Mr.Animals accross the river.
@@ -63,6 +64,8 @@
 			var bHumanWalking = false;
 			var bStart = false;
 			var bGameOver = false;
+			var CollideableMesh = [];
+			//var cube;
 			
 			for(i=0;i<4;i++){
 				MeshActions.push([]);
@@ -84,7 +87,7 @@
 			loadMesh('Human');
 			loadMesh('Cabbage');
 			loadMesh('Sheep');
-			loadMesh('Land');			
+			loadMesh('Land');				
 			loadMesh('YellowBalloon');
 			loadMesh('PurpleBalloon');
 			loadMesh('River');
@@ -122,7 +125,17 @@
 			loadMesh('Plant1');
 			loadMesh('Plant2');
 			loadMesh('Plant3');
-		
+			
+			loadMesh('BoundPlane1');
+			loadMesh('BoundPlane2');
+			loadMesh('BoundPlane3');
+			loadMesh('BoundPlane4');
+			loadMesh('BoundPlane5');
+			loadMesh('BoundPlane6');
+			loadMesh('BoundPlane7');
+			loadMesh('BoundPlane8');
+			loadMesh('BoundPlane9');
+			loadMesh('BoundPlane10');			
 			
 			/*******************************************************/
 			/*					  General Audio                    */
@@ -164,5 +177,6 @@
 		    render();
 		
 		</script>
+		
 	</body>
 </html>
