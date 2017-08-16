@@ -136,10 +136,24 @@ function initLights() {
 	var light = new THREE.AmbientLight(0xffffff,0.4);
 	scene.add(light);
 	
-	//Create a DirectionalLight and turn on shadows for the light
+	Create a DirectionalLight and turn on shadows for the light
 	var light = new THREE.DirectionalLight( 0xffffff, .6 );
 	light.position.set( 100, 100, -100 ); 			//default; light shining from top
 	scene.add( light,camera);
+	
+	var spotLight = new THREE.SpotLight( 0xffffff );
+	spotLight.position.set( 100, 200, 100 );
+
+	spotLight.castShadow = true;
+
+	spotLight.shadow.mapSize.width = 1024;
+	spotLight.shadow.mapSize.height = 1024;
+
+	spotLight.shadow.camera.near = 500;
+	spotLight.shadow.camera.far = 4000;
+	spotLight.shadow.camera.fov = 30;
+	
+	scene.add( spotLight );
 
 
 }
