@@ -85,6 +85,7 @@ function createMesh(geometry, materials,sName,bSkinning){
 }
 
 function render(){
+	   
 	var delta = clock.getDelta();
 	
 	requestAnimationFrame(render);
@@ -97,7 +98,7 @@ function render(){
 	if(bStart){
 		checkCouples();
 		reachGoal();
-		
+	
 		if(bGameOver){
 			createTexts("end");
 			assignId();
@@ -119,7 +120,7 @@ function render(){
 	
 	
 	renderer.render(scene,camera);
-};
+}
 
 function rotateMesh(mesh) {
 	SPEED = 0.005; 
@@ -133,27 +134,28 @@ function rotateMesh(mesh) {
 }		
 
 function initLights() {
-	var light = new THREE.AmbientLight(0xffffff,0.4);
-	scene.add(light);
+	// var light = new THREE.AmbientLight(0xffffff,0.4);
+	// scene.add(light);
 	
-	Create a DirectionalLight and turn on shadows for the light
-	var light = new THREE.DirectionalLight( 0xffffff, .6 );
-	light.position.set( 100, 100, -100 ); 			//default; light shining from top
-	scene.add( light,camera);
-	
-	var spotLight = new THREE.SpotLight( 0xffffff );
-	spotLight.position.set( 100, 200, 100 );
-
+	// Create a DirectionalLight and turn on shadows for the light
+	// var light = new THREE.DirectionalLight( 0xffffff, .6 );
+	// light.position.set( 100, 100, -100 ); 			//default; light shining from top
+	// scene.add( light,camera);
+	var spotLight = new THREE.SpotLight( 0xffffff,1.0,20.0,3.14/8,0.0,0.5 ); //SpotLight( color, intensity, distance, angle, penumbra, decay )
+	spotLight.position.set(220.0,32.0,40.0);
+	spotLight.target.position.set(0.0,0.0,0.0);
 	spotLight.castShadow = true;
-
+	
 	spotLight.shadow.mapSize.width = 1024;
 	spotLight.shadow.mapSize.height = 1024;
-
+	
 	spotLight.shadow.camera.near = 500;
 	spotLight.shadow.camera.far = 4000;
 	spotLight.shadow.camera.fov = 30;
 	
 	scene.add( spotLight );
+	
+	
 
 
 }
@@ -200,13 +202,15 @@ function assignId(){
 		}else if( meshes[i].name == "Complete" ){
 			iComplete = i;
 		}
+	
 	}
 }
 
 function setInitialPositions(){
 	
-	meshes[iWolf].position.set(0,-13.0,0);
-	meshes[iHuman].position.set(-120.52,-13.0,40.60);
+	meshes[iWolf].position.set(0.0,-13.0,0.0);
+	//meshes[iHuman].position.set(-120.52,-13.0,40.60);
+	meshes[iHuman].position.set(200.64261,-13.0,43.47626);
 	meshes[iCabbage].position.set(15,-13.0,118);
 	meshes[iSheep].position.set(212.64261,-13.0,43.47626);
 	meshes[iRaft].position.set(0,-14,-40);
@@ -372,6 +376,7 @@ function detectCollision(mesh){
 			var BoundingPlane = new THREE.Plane().setFromCoplanarPoints(CollideableMesh[i].geometry.vertices[0],CollideableMesh[i].geometry.vertices[1],CollideableMesh[i].geometry.vertices[2]).normalize();
 			var bVertexMin = isInFront(BoundingBox.min,BoundingPlane);
 			var bVertexMax = isInFront(BoundingBox.max,BoundingPlane);
+			
 			
 			if(( bVertexMin || bVertexMax ) && !( bVertexMin && bVertexMax ) ){
 				return true;

@@ -146,17 +146,17 @@
 			/*******************************************************/
 			/*					  General Audio                    */
 			/*******************************************************/	
-			var audiolistener = new THREE.AudioListener();
-			camera.add( this.audiolistener );
+			<!-- var audiolistener = new THREE.AudioListener(); -->
+			<!-- camera.add( this.audiolistener ); -->
 
-			var sound = new THREE.Audio( audiolistener );
-			var audioLoader = new THREE.AudioLoader();
-			audioLoader.load( '..\\..\\soundeffects\\starwars.mp3', function( buffer ) {
-			sound.setBuffer( buffer );
-			sound.setLoop(false);
-			sound.setVolume(0.5);
-			sound.play();
-			});
+			<!-- var sound = new THREE.Audio( audiolistener ); -->
+			<!-- var audioLoader = new THREE.AudioLoader(); -->
+			<!-- audioLoader.load( '..\\..\\soundeffects\\starwars.mp3', function( buffer ) { -->
+			<!-- sound.setBuffer( buffer ); -->
+			<!-- sound.setLoop(false); -->
+			<!-- sound.setVolume(0.5); -->
+			<!-- sound.play(); -->
+			<!-- }); -->
 			
 			/*******************************************************/
 			/*					  BackGroundEnv                    */
@@ -174,6 +174,8 @@
 			
 			var cube = new THREE.Mesh(geometry,cubeMaterials);
 			scene.add(cube);
+			
+	
 			
 			/*******************************************************/
 			/*					  Ikou                             */
