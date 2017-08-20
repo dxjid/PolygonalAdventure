@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>Polygonal Adventure</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="..\js\three.js"></script>
+		<script src="..\js\InitFunctions.js"></script>
+		<script src="..\js\EventListener.js"></script>
+
+		<!-- ------------------------------------------------------------ -->
+		<script src="..\js\jquery-1.9.1.js"></script>
+		<script src="..\js\jquery-ui.js"></script>
+		<link rel=stylesheet href="..\css\jquery-ui.css" />
+		<link rel=stylesheet href="..\css\info.css"/>
+		<script src="..\js\info.js"></script>
+		<div id="message"></div>
+		<div id="infoButton"></div>
+		<div id="infoBox" title="Information about the Game">
+		To win this game you have to solve the riddle. The Object of the game is to transport the wolf, the sheep and the cabbage accross the river and to arrive the farmer's house.
+		Note! the Wolf eats the Sheep and the Sheep eats the Cabbage if the farmer is not around.
+		
+		Controls: (w,a,s,d) to move, (z,x,c) to make the characters follow you and b to unboard/board the boat
+		
+		Good Luck!!!
+		
+		</div>
+		<!-- ------------------------------------------------------------ -->
+
+		<div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+		
+		<script>
+			/*******************************************************/
+			/*					SCENE COMPONENTS                   */
+			/*******************************************************/
+		    var clock = new THREE.Clock();
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 100, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			var meshes = [];
+			var MeshActions = [];
+			var materials = [];
+			var action = {}, mixers = [];
+			var renderer = new THREE.WebGLRenderer({alpha: true} );
+			var loader = new THREE.JSONLoader();
+			var iWolf;
+			var iSheep;
+			var iHuman;
+			var iCabbage;
+			var iTitle;
+			var iEnd;
+			var iHit;
+			var iComplete;
+			var iRaft;
+			var WOLF = 0,
+				HUMAN = 1,
+				CABBAGE = 2,
+				SHEEP = 3;
+			var bFollowSheep = false;
+			var bFollowWolf = false;
+			var bFollowCabbage = false;
+			var sJSONFolder = "..\\..\\JSON\\";
+			var bHumanWalking = false;
+			var bStart = false;
+			var bGameOver = false;
+			var CollideablePlane = [];
+			var CollideableBox = [];
+			var bInRaft = false;
+			var bRaftLeft = true;
+			var PointGoal = new THREE.Vector3(86,-13.0,-136);
+			var bComplete = false;
+			//var cube;
+			
+			for(i=0;i<4;i++){
+				MeshActions.push([]);
+			}
+			
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+
+			camera.position.z = 300;
+			camera.position.y = 75;
+			camera.lookAt( new THREE.Vector3(0,0,0) );
+	
+			/*******************************************************/
+			/*					  Model Loading                    */
+			/*******************************************************/		
+			
+			loadMesh('Wolf');
+			loadMesh('Human');
+			loadMesh('Cabbage');
+			loadMesh('Sheep');
+			loadMesh('Raft');
+			loadMesh('Land');				
+			loadMesh('YellowBalloon');
+			loadMesh('PurpleBalloon');
+			loadMesh('River');
+			loadMesh('LightHouse');
+			loadMesh('YellowHouse');
+			loadMesh('YellowHouse2');
+			loadMesh('BlueHouse');
+			loadMesh('BrownHouse');
+			loadMesh('Windmill');			
+			loadMesh('BrownTree');
+			loadMesh('BrownTree2');			
+			loadMesh('PurpleTree');
+			loadMesh('PurpleTree2');
+			loadMesh('PurpleTree3');
+			loadMesh('PurpleTree4');
+			loadMesh('GreenTree1');
+			loadMesh('GreenTree2');			
+			loadMesh('GreenTree3');
+			loadMesh('GreenTree4');
+			loadMesh('GreenTree5');
+			loadMesh('GreenTree6');
+			loadMesh('GreenTree7');
+			loadMesh('GreenTree8');
+			loadMesh('GreenTree9');
+			loadMesh('GreenTree10');
+			loadMesh('GreenTree11');
+			loadMesh('GreenTree12');
+			loadMesh('GreenTree13');
+			loadMesh('GreenTree14');
+			loadMesh('LittleBrownTree1');
+			loadMesh('LittleBrownTree2');
+			loadMesh('LittleBrownTree3');
+			loadMesh('LittleBrownTree4');
+			loadMesh('Plant1');
+			loadMesh('Plant2');
+			loadMesh('Plant3');
+			
+			loadMesh('BoundPlane1');
+			loadMesh('BoundPlane2');
+			loadMesh('BoundPlane3');
+			loadMesh('BoundPlane4');
+			loadMesh('BoundPlane5');
+			loadMesh('BoundPlane6');
+			loadMesh('BoundPlane7');
+			loadMesh('BoundPlane8');
+			loadMesh('BoundPlane9');
+			loadMesh('BoundPlane10');			
+			
+			/*******************************************************/
+			/*					  General Audio                    */
+			/*******************************************************/	
+			var audiolistener = new THREE.AudioListener();
+			camera.add( this.audiolistener );
+
+			var sound = new THREE.Audio( audiolistener );
+			var audioLoader = new THREE.AudioLoader();
+			audioLoader.load( '..\\..\\soundeffects\\MineCraft.mp3', function( buffer ) {
+			sound.setBuffer( buffer );
+			sound.setLoop(false);
+			sound.setVolume(0.5);
+			sound.play();
+			});
+			
+			/*******************************************************/
+			/*					  BackGroundEnv                    */
+			/*******************************************************/	
+			var geometry = new THREE.CubeGeometry(500,500,500)	
+			var cubeMaterials =
+			[
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\front.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\back.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\up.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\down.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\right.png"),side: THREE.BackSide}),
+				new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("..\\images\\left.png"),side: THREE.BackSide})
+			];
+			
+			var cube = new THREE.Mesh(geometry,cubeMaterials);
+			scene.add(cube);
+			
+	
+			
+			/*******************************************************/
+			/*					  Ikou                             */
+			/*******************************************************/	
+			createTexts("start");
+			initLights();
+		    render();
+		
+		</script>
+		
+	</body>
+</html>
