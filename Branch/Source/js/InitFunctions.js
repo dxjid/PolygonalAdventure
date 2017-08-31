@@ -32,16 +32,17 @@ function createMesh(geometry, materials,sName,bSkinning){
 	mesh = new THREE.SkinnedMesh(geometry, material);
 	mesh.name = sName;
 	meshes.push(mesh);
+
 	
-	/*
-	if(sName.includes("Bound")){
-		CollideableMesh.push(mesh);
-	}
-	*/
-	
-	if(!sName.includes("Wolf") && !sName.includes("Human") && !sName.includes("Cabbage") && !sName.includes("Sheep") &&
+	if(  !sName.includes("Human") && !sName.includes("Wolf") && !sName.includes("Cabbage") && !sName.includes("Sheep")  &&
 	   !sName.includes("Land") && !sName.includes("YellowBalloon") && !sName.includes("PurpleBalloon") && !sName.includes("River")){
-		CollideableMesh.push(mesh);
+		
+		if(sName.includes("Plane")){
+			CollideablePlane.push(new THREE.Plane().setFromCoplanarPoints(mesh.geometry.vertices[0],mesh.geometry.vertices[1],mesh.geometry.vertices[2]).normalize());
+		}else{
+			CollideableBox.push(new THREE.Box3().setFromObject(mesh));	
+		}
+		
 	}	
 	
 	
@@ -54,18 +55,6 @@ function createMesh(geometry, materials,sName,bSkinning){
 		iPos = WOLF;
 	}else if(sName == "Human"){
 		iPos = HUMAN;
-		
-		/*
-		var box = new THREE.Box3();
-		box.setFromObject (mesh);
-
-		var geometry = new THREE.BoxGeometry( Math.abs(box.max.x - box.min.x), Math.abs(box.max.y - box.min.y), Math.abs(box.max.z - box.min.z) );
-		var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-		cube = new THREE.Mesh( geometry, material );
-		cube.position = mesh.position;
-		scene.add( cube );
-		*/
-		
 	}else if(sName == "Cabbage"){
 		iPos = CABBAGE;
 	}else if(sName == "Sheep"){
@@ -134,13 +123,14 @@ function rotateMesh(mesh) {
 }		
 
 function initLights() {
-	// var light = new THREE.AmbientLight(0xffffff,0.4);
-	// scene.add(light);
+	var light = new THREE.AmbientLight(0xffffff,0.4);
+	scene.add(light);
 	
 	// Create a DirectionalLight and turn on shadows for the light
-	// var light = new THREE.DirectionalLight( 0xffffff, .6 );
-	// light.position.set( 100, 100, -100 ); 			//default; light shining from top
-	// scene.add( light,camera);
+	var light = new THREE.DirectionalLight( 0xffffff, .6 );
+	light.position.set( 100, 100, -100 ); 			//default; light shining from top
+	scene.add( light,camera);
+	
 	var spotLight = new THREE.SpotLight( 0xffffff,1.0,20.0,3.14/8,0.0,0.5 ); //SpotLight( color, intensity, distance, angle, penumbra, decay )
 	spotLight.position.set(220.0,32.0,40.0);
 	spotLight.target.position.set(0.0,0.0,0.0);
@@ -368,30 +358,39 @@ function createTextMesh(name,text,font){
 function detectCollision(mesh){
 	
 	var BoundingBox = new THREE.Box3().setFromObject( mesh );
+	var BoundingBoxW = new THREE.Box3().setFromObject( meshes[iWolf] );
+	var BoundingBoxS = new THREE.Box3().setFromObject( meshes[iSheep] );
+	var BoundingBoxC = new THREE.Box3().setFromObject( meshes[iCabbage] );
 	
-	for(var i = 0; i < CollideableMesh.length ; i++){
-		var sName = CollideableMesh[i].name;
+	//Collisions with Planes
+	for(var i = 0; i < CollideablePlane.length ; i++){
+		var BoundingPlane = CollideablePlane[i];
+		var bVertexMin = isInFront(BoundingBox.min,BoundingPlane);
+		var bVertexMax = isInFront(BoundingBox.max,BoundingPlane);
 		
-		if(sName.includes('Plane')){
-			var BoundingPlane = new THREE.Plane().setFromCoplanarPoints(CollideableMesh[i].geometry.vertices[0],CollideableMesh[i].geometry.vertices[1],CollideableMesh[i].geometry.vertices[2]).normalize();
-			var bVertexMin = isInFront(BoundingBox.min,BoundingPlane);
-			var bVertexMax = isInFront(BoundingBox.max,BoundingPlane);
-			
-			
-			if(( bVertexMin || bVertexMax ) && !( bVertexMin && bVertexMax ) ){
-				return true;
-			}
-		}else{
-			//Takes a lot of Processor
-			/*
-			var BoundingBoxCollision =  new THREE.Box3().setFromObject(CollideableMesh[i]);
-			
-			if(BoundingBox.intersectsBox(BoundingBoxCollision)){
-				return true;
-			}
-			*/
-		}
+		if(( bVertexMin || bVertexMax ) && !( bVertexMin && bVertexMax ) ){
+			return true;
+		}		
 	}
+
+	//Collisions with Trees and Houses
+	for(var i = 0; i < CollideableBox.length ; i++){		
+		if(BoundingBox.intersectsBox(CollideableBox[i])){
+			return true;
+		}		
+	}		
+
+	if(BoundingBox.intersectsBox(BoundingBoxW) && !bFollowWolf){
+		return true;
+	}	
+
+	if(BoundingBox.intersectsBox(BoundingBoxS) && !bFollowSheep){
+		return true;
+	}	
+
+	if(BoundingBox.intersectsBox(BoundingBoxC) && !bFollowCabbage){
+		return true;
+	}			
 
 	return false;
 }
@@ -435,14 +434,6 @@ function updateCharacterPositionsOnBoat(){
 		}else if(bFollowCabbage){
 			iPos = iCabbage;		
 		}
-		
-	/*	
-		if(meshes[iRaft].position.z >= -40){
-			meshes[iHuman].rotation.y = Math.PI / 180 * 0;
-		}else{
-			meshes[iHuman].rotation.y = Math.PI / 180 * 180;
-		}
-	*/
 	
 		if( iPos != -1){
 			meshes[iPos].position.copy(MeshOffsetC);

@@ -22,10 +22,11 @@
 		<div id="message"></div>
 		<div id="infoButton"></div>
 		<div id="infoBox" title="Information about the Game">
-		To win this game you have to solve the riddle.The Object of the game is to transport the Mr.Animals accross the river.
-		Note! Mr.Wolf eats Mr.Sheep when Mr.Cabbage is not around 
-		and
-		Mr.Sheep eats Mr.Cabbage when Mr.Wolf is not around!
+		To win this game you have to solve the riddle. The Object of the game is to transport the wolf, the sheep and the cabbage accross the river and to arrive the farmer's house.
+		Note! the Wolf eats the Sheep and the Sheep eats the Cabbage if the farmer is not around.
+		
+		Controls: (w,a,s,d) to move, (z,x,c) to make the characters follow you and b to unboard/board the boat
+		
 		Good Luck!!!
 		
 		</div>
@@ -66,7 +67,8 @@
 			var bHumanWalking = false;
 			var bStart = false;
 			var bGameOver = false;
-			var CollideableMesh = [];
+			var CollideablePlane = [];
+			var CollideableBox = [];
 			var bInRaft = false;
 			var bRaftLeft = true;
 			var PointGoal = new THREE.Vector3(86,-13.0,-136);
@@ -146,17 +148,17 @@
 			/*******************************************************/
 			/*					  General Audio                    */
 			/*******************************************************/	
-			<!-- var audiolistener = new THREE.AudioListener(); -->
-			<!-- camera.add( this.audiolistener ); -->
+			var audiolistener = new THREE.AudioListener();
+			camera.add( this.audiolistener );
 
-			<!-- var sound = new THREE.Audio( audiolistener ); -->
-			<!-- var audioLoader = new THREE.AudioLoader(); -->
-			<!-- audioLoader.load( '..\\..\\soundeffects\\starwars.mp3', function( buffer ) { -->
-			<!-- sound.setBuffer( buffer ); -->
-			<!-- sound.setLoop(false); -->
-			<!-- sound.setVolume(0.5); -->
-			<!-- sound.play(); -->
-			<!-- }); -->
+			var sound = new THREE.Audio( audiolistener );
+			var audioLoader = new THREE.AudioLoader();
+			audioLoader.load( '..\\..\\soundeffects\\MineCraft.mp3', function( buffer ) {
+			sound.setBuffer( buffer );
+			sound.setLoop(false);
+			sound.setVolume(0.5);
+			sound.play();
+			});
 			
 			/*******************************************************/
 			/*					  BackGroundEnv                    */
